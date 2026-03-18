@@ -1,24 +1,20 @@
-package com.travis.bankingapp.account;
+package com.travis.bankingapp.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.travis.bankingapp.transaction.Transaction;
-import com.travis.bankingapp.user.User;
+import com.travis.bankingapp.account.Account;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,37 +22,34 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "accounts")
-public class Account {
+@Table(name = "transactions")
+public class Transaction {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, unique = true)
-  private String accountNumber;
-
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private AccountType type;
+  private TransactionType type;
 
   @Column(nullable = false, precision = 19, scale = 2)
-  private BigDecimal balance;
+  private BigDecimal amount;
+
+  private String description;
 
   @ManyToOne(optional = false)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  @JoinColumn(name = "account_id", nullable = false)
+  private Account account;
 
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
-  @OneToMany(mappedBy = "account")
-  private List<Transaction> transactions = new ArrayList<>();
-
-  public Account(String accountNumber, AccountType type, BigDecimal balance) {
-    this.accountNumber = accountNumber;
+  public Transaction(TransactionType type, BigDecimal amount, String description, Account account) {
     this.type = type;
-    this.balance = balance;
+    this.amount = amount;
+    this.description = description;
+    this.account = account;
   }
 
   @PrePersist
