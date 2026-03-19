@@ -1,6 +1,9 @@
 package com.travis.bankingapp.user;
 
 import org.springframework.stereotype.Service;
+
+import com.travis.bankingapp.auth.dto.RegisterRequest;
+
 import java.util.List;
 
 
@@ -13,10 +16,17 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
-  public User createUser(User user) {
-    if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+  public User createUser(RegisterRequest request) {
+    if (userRepository.findByEmail(request.getEmail()).isPresent()) {
       throw new IllegalArgumentException("Email already exists");
     }
+
+    User user = new User();
+    user.setFirstName(request.getFirstName());
+    user.setLastName(request.getLastName());
+    user.setEmail(request.getEmail());
+    user.setPassword(request.getPassword());
+
     return userRepository.save(user);
   }
 

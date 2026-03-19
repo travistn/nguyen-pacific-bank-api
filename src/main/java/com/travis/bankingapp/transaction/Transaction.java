@@ -1,7 +1,9 @@
 package com.travis.bankingapp.transaction;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.travis.bankingapp.account.Account;
 
@@ -12,7 +14,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
@@ -42,18 +43,14 @@ public class Transaction {
   @JoinColumn(name = "account_id", nullable = false)
   private Account account;
 
+  @CreationTimestamp
   @Column(nullable = false, updatable = false)
-  private LocalDateTime createdAt;
+  private OffsetDateTime transactionDate;
 
   public Transaction(TransactionType type, BigDecimal amount, String description, Account account) {
     this.type = type;
     this.amount = amount;
     this.description = description;
     this.account = account;
-  }
-
-  @PrePersist
-  public void prePersist() {
-    this.createdAt = LocalDateTime.now();
   }
 }
